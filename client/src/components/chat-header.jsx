@@ -10,7 +10,7 @@ const ChatHeader = ({ user }) => {
             className="rounded-circle mx-2"
             width="40"
             height="40"
-            alt={user.username}
+            alt={user?.username}
           />
         </div>
         <div className="flex-grow-1">

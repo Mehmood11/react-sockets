@@ -14,6 +14,7 @@ const Main = ({ socket }) => {
   }
 
   const logNewUser = () => {
+    console.log("ssds");
     socket.auth = { username: newUsername };
     socket.connect();
   };
@@ -23,23 +24,34 @@ const Main = ({ socket }) => {
       console.log(users);
       const messageArr = [];
       for (const { userId, username } of users) {
-        const newMessage = { type: "UserStatus", userId, username };
+        const newMessage = { type: "userStatus", userId, username };
         messageArr.push(newMessage);
       }
 
-      setMessages([...messages, messageArr]);
+      setMessages([...messages, ...messageArr]);
       setUsers(users);
     });
     socket.on("session", ({ userId, username }) => {
       setUser({ userId, username });
     });
+
+    socket.on("user connected", ({ userId, username }) => {
+      const newMessage = { type: "userStatus", userId, username };
+      setMessages([...messages, newMessage]);
+    });
   }, [socket, messages]);
   return (
     <main className="content">
       <div className="container mt-3">
-        {user ? (
-          <Chat user={user} message={message} setMessage={setMessage} />
-        ) : (
+        {user?.userId && (
+          <Chat
+            user={user}
+            message={message}
+            messages={messages}
+            setMessage={setMessage}
+          />
+        )}
+        {!user?.userId && (
           <Login
             newUsername={newUsername}
             handleChange={handleChange}
