@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3004",
     methods: ["GET", "POST"],
   },
 });
@@ -24,7 +24,7 @@ io.on("connection", async (socket) => {
   // all connected users
   const users = [];
   for (let [id, socket] of io.of("/").sockets) {
-    users.push({ userId: id, username: socket.username });
+    users.push({ userId: socket.userId, username: socket.username });
   }
 
   // all users event
@@ -34,6 +34,11 @@ io.on("connection", async (socket) => {
   // socket.on('disconnect', () => {
   //     console.log('user disconnected')
   // })
+
+  socket.broadcast.emit("user connected", {
+    userId: socket.userId,
+    username: socket.username,
+  });
 });
 
 console.log("Listening on port 4000");
