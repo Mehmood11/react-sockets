@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3004",
+    origin: "http://localhost:3001",
     methods: ["GET", "POST"],
   },
 });
@@ -35,9 +35,19 @@ io.on("connection", async (socket) => {
   //     console.log('user disconnected')
   // })
 
+  // New User Event
   socket.broadcast.emit("user connected", {
     userId: socket.userId,
     username: socket.username,
+  });
+
+  //New Message Event
+  socket.on("new message", (message) => {
+    socket.broadcast.emit("new message", {
+      userId: socket.userId,
+      username: socket.username,
+      message,
+    });
   });
 });
 

@@ -1,8 +1,8 @@
 import React from "react";
 
-const ChatInput = ({ message, setMessage }) => {
+const ChatInput = ({ message, sendMessage, setMessage }) => {
   return (
-    <div className="mt-auto align-items-end border-info py-3 px-4 border-top d-lg-block">
+    <div className="mt-auto align-items-end border-info py-3 px-4 border-top d-lg-block chat-input">
       <div className="input-group flex-fill">
         <input
           type="text"
@@ -11,6 +11,7 @@ const ChatInput = ({ message, setMessage }) => {
           value={message}
           placeholder="Type your message"
           onChange={({ currentTarget: input }) => setMessage(input.value)}
+          onKeyPress={(e) => (e.code === "Enter" ? sendMessage() : null)}
         />
         <button className="btn btn-info">Send</button>
       </div>

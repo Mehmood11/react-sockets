@@ -14,14 +14,26 @@ const Main = ({ socket }) => {
   }
 
   const logNewUser = () => {
-    console.log("ssds");
     socket.auth = { username: newUsername };
     socket.connect();
   };
 
+  const sendMessage = () => {
+    socket.emit("new message", message);
+
+    const newMessage = {
+      type: "message",
+      userId: user.userId,
+      username: user.username,
+      message,
+    };
+
+    setMessages([...messages, newMessage]);
+    setMessage("");
+  };
+
   useEffect(() => {
     socket.on("users", (users) => {
-      console.log(users);
       const messageArr = [];
       for (const { userId, username } of users) {
         const newMessage = { type: "userStatus", userId, username };
@@ -39,7 +51,19 @@ const Main = ({ socket }) => {
       const newMessage = { type: "userStatus", userId, username };
       setMessages([...messages, newMessage]);
     });
+
+    socket.on("new message", ({ userId, username, message }) => {
+      const newMessage = {
+        type: "message",
+        userId: userId,
+        username: username,
+        message,
+      };
+
+      setMessages([...messages, newMessage]);
+    });
   }, [socket, messages]);
+
   return (
     <main className="content">
       <div className="container mt-3">
@@ -48,9 +72,10 @@ const Main = ({ socket }) => {
             user={user}
             message={message}
             messages={messages}
+            sendMessage={sendMessage}
             setMessage={setMessage}
           />
-        )}
+        )}{" "}
         {!user?.userId && (
           <Login
             newUsername={newUsername}
